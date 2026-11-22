@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="nl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>LoopNova Dashboard</title>
+<link rel="icon" href="logo.png">
+<style>
+html,body{margin:0;background:#E9E6DD}
+body{padding:16px;font-family:"Segoe UI",system-ui,-apple-system,sans-serif}
+@media(max-width:600px){body{padding:6px}}
+.ln{max-width:1500px;margin:0 auto}
+.ln-upd a{color:#6D7F48}
+#slot{display:none}
+#login{min-height:90vh;display:flex;align-items:center;justify-content:center}
+.lg{background:#fff;border-radius:14px;padding:30px 28px;width:min(380px,100%);box-shadow:0 6px 24px rgba(38,51,40,.12);border-top:5px solid #6D7F48;color:#263328;text-align:center}
+.lg img{height:60px}
+.lg h1{font-size:20px;margin:12px 0 2px}
+.lg p{font-size:13px;color:#5b665c;margin:0 0 18px}
+.lg input[type=password]{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #cfcbc0;border-radius:8px;font:inherit;font-size:15px}
+.lg label{display:flex;gap:8px;align-items:center;font-size:13px;margin:12px 0;color:#3d4a3f;justify-content:flex-start}
+.lg button{width:100%;padding:11px;border:0;border-radius:8px;background:#263328;color:#fff;font:600 15px inherit;font-family:inherit;cursor:pointer}
+.lg button:disabled{opacity:.6}
+.lg .fout{color:#a4472f;font-size:13px;min-height:18px;margin-top:10px}
+
+.ln{--ln-dark:#263328;--ln-green:#6D7F48;--ln-light:#A8C688;--ln-sand:#E9E6DD;--ln-bg:#F7F6F2;--ln-gold:#BC8E4A;
+  background:var(--ln-bg);color:var(--ln-dark);font-family:"Segoe UI",var(--font-anthropic-sans),system-ui,sans-serif;border-radius:12px;overflow:hidden}
+.ln *{box-sizing:border-box}
+.ln-head{background:#fff;display:flex;align-items:center;gap:16px;padding:14px 22px;flex-wrap:wrap;border-bottom:3px solid var(--ln-green)}
+.ln-logo{height:46px;width:auto}
+.ln-brand{display:flex;flex-direction:column;line-height:1.15}
+.ln-brand b{font-size:20px;letter-spacing:.5px}
+.ln-brand span{font-size:11px;letter-spacing:3px;color:var(--ln-green);font-weight:600}
+.ln-upd{margin-left:auto;font-size:12px;color:#5b665c;text-align:right}
+.ln-tabs{display:flex;gap:4px;padding:10px 18px 0;background:#fff;flex-wrap:wrap}
+.ln-tab{border:0;background:var(--ln-sand);color:var(--ln-dark);font:600 13px/1 inherit;font-family:inherit;padding:10px 16px;border-radius:8px 8px 0 0;cursor:pointer}
+.ln-tab[aria-selected="true"]{background:var(--ln-dark);color:#fff}
+.ln-page{padding:18px 22px 26px}
+.ln-h1{font-size:22px;margin:0 0 4px;font-weight:700}
+.ln-sum{margin:0 0 16px;font-size:14px;color:#3d4a3f}
+.ln-sum b{color:var(--ln-dark)}
+.ln-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:14px}
+.ln-card{background:#fff;border-radius:10px;padding:14px 16px;border-left:5px solid var(--ln-green);box-shadow:0 1px 2px rgba(38,51,40,.08)}
+.ln-card.gold{border-left-color:var(--ln-gold)}.ln-card.dark{border-left-color:var(--ln-dark)}.ln-card.light{border-left-color:var(--ln-light)}
+.ln-card h3{margin:0;font-size:12px;font-weight:600;color:#5b665c;text-transform:uppercase;letter-spacing:.4px}
+.ln-val{display:inline-block;font-size:26px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums;min-width:2ch}
+.ln-card p{margin:4px 0 0;font-size:12px;color:#6c766d}
+.ln-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px}
+.ln-box{background:#fff;border-radius:10px;padding:14px 16px;box-shadow:0 1px 2px rgba(38,51,40,.08);min-width:0}
+.ln-box h2{margin:0 0 2px;font-size:15px}
+.ln-box .ln-sub{margin:0 0 8px;font-size:12px;color:#6c766d}
+.ln-chart{position:relative;min-height:240px;width:100%}
+.ln-chart svg{display:block;overflow:visible}
+.ln-chart text{font-family:inherit;font-size:11px;fill:#5b665c}
+.ln-chart .lbl{fill:var(--ln-dark);font-weight:600}
+.ln-tip{position:absolute;pointer-events:none;background:#fff;border:1px solid #d9d6cc;box-shadow:0 4px 12px rgba(0,0,0,.12);border-radius:6px;padding:6px 9px;font-size:12px;color:var(--ln-dark);white-space:nowrap;z-index:5}
+.ln-prog{background:#fff;border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(38,51,40,.08)}
+.ln-prog .top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;gap:8px;flex-wrap:wrap}
+.ln-bar{height:16px;background:var(--ln-sand);border-radius:8px;overflow:hidden}
+.ln-bar div{height:100%;background:linear-gradient(90deg,var(--ln-green),var(--ln-light));border-radius:8px}
+.ln-twrap{overflow-x:auto}
+.ln-table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+.ln-table th{text-align:left;background:var(--ln-dark);color:#fff;font-weight:600;padding:7px 9px;white-space:nowrap}
+.ln-table td{padding:7px 9px;border-bottom:1px solid var(--ln-sand);white-space:nowrap}
+.ln-table .r{text-align:right}
+.ln-note{background:#fff7e8;border:1px solid #ecd3a6;border-radius:8px;padding:9px 12px;font-size:13px;margin-bottom:14px}
+.ln-foot{font-size:11px;color:#6c766d;padding:0 22px 16px}
+.ln-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;margin-top:6px}
+.ln-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+@media print{.ln-tabs{display:none}.ln-page{break-before:page}.ln-page:first-of-type{break-before:auto}}
+</style></head>
+<body>
+<div id="login"><form class="lg" id="lgform" autocomplete="off">
+  <img src="logo.png" alt="LoopNova">
+  <h1>LoopNova Dashboard</h1>
+  <p>Alleen voor het LoopNova-bestuur</p>
+  <input type="password" id="pw" placeholder="Wachtwoord" autocomplete="current-password" autofocus>
+  <label><input type="checkbox" id="onthoud" checked> Onthoud op dit apparaat</label>
+  <button id="go" type="submit">Openen</button>
+  <div class="fout" id="fout"></div>
+</form></div>
+<div id="slot">
+
+<div class="ln" id="loopnova">
+  <header class="ln-head" id="kop">
+    <img class="ln-logo" src="logo.png" alt="LoopNova logo">
+    <div class="ln-brand"><b>LoopNova Dashboard</b><span>YOU CAN RECYCLE</span></div>
+    <div class="ln-upd">Bijgewerkt: <b data-draw="upd" data-source="info" data-field="Bijgewerkt" data-row="0">—</b><br>Alleen-lezen · cijfers uit de LoopNova-administratie · <a href="#" id="uitloggen">Uitloggen</a></div>
+  </header>
+  <nav class="ln-tabs" id="tabs" role="tablist">
+    <button class="ln-tab" role="tab" data-tab="founders" aria-selected="true">Founders</button>
+    <button class="ln-tab" role="tab" data-tab="financieel" aria-selected="false">Financieel</button>
+    <button class="ln-tab" role="tab" data-tab="kas" aria-selected="false">Kas en voorraad</button>
+    <button class="ln-tab" role="tab" data-tab="marketing" aria-selected="false">Marketing</button>
+  </nav>
+
+  <!-- FOUNDERS -->
+  <section class="ln-page" id="founders" role="tabpanel">
+    <h1 class="ln-h1">Founders</h1>
+    <p class="ln-sum">Opgehaald: <b data-draw="kpi" data-fmt="eur0" data-source="kpi" data-field="Waarde" data-where="Kengetal=Founderkapitaal">—</b> van het doel van <b data-draw="kpi" data-fmt="eur0" data-source="kpi" data-field="Waarde" data-where="Kengetal=Foundersdoel">—</b>, door <b data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Aantal founders">—</b> founders.</p>
+    <div class="ln-prog" id="founders-voortgang">
+      <div class="top"><span><b>Voortgang naar foundersdoel</b></span><span><b data-draw="kpi" data-fmt="pct1" data-source="kpi" data-field="Waarde" data-where="Kengetal=Founders behaald %25">—</b> behaald · nog <b data-draw="kpi" data-fmt="eur0" data-source="kpi" data-field="Waarde" data-where="Kengetal=Nog op te halen">—</b></span></div>
+      <div class="ln-bar" data-draw="bar" data-key="Founders behaald %" data-source="kpi"></div>
+    </div>
+    <div class="ln-cards">
+      <div class="ln-card" id="c-founderkapitaal"><h3>Founderkapitaal</h3><b class="ln-val" data-draw="kpi" data-fmt="eur0" data-source="kpi" data-field="Waarde" data-where="Kengetal=Founderkapitaal">—</b><p>Totaal ingelegd</p></div>
+      <div class="ln-card dark" id="c-founders"><h3>Founders</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Aantal founders">—</b><p>Personen met inleg</p></div>
+      <div class="ln-card light" id="c-inleggen"><h3>Inleggen van € 10</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Aantal inleggen van €10">—</b><p>Volgens overzicht donateurs</p></div>
+      <div class="ln-card gold" id="c-gem"><h3>Gemiddelde inleg</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Gemiddelde inleg">—</b><p>Per betaling</p></div>
+      <div class="ln-card" id="c-nog"><h3>Nog op te halen</h3><b class="ln-val" data-draw="kpi" data-fmt="eur0" data-source="kpi" data-field="Waarde" data-where="Kengetal=Nog op te halen">—</b><p>Tot doel van € 2.000</p></div>
+    </div>
+    <div class="ln-grid">
+      <div class="ln-box" id="g-cumulatief"><h2>Founderkapitaal over tijd</h2><p class="ln-sub">Inleg per dag (staven) en totaal opgebouwd (lijn), met het doel als stippellijn</p>
+        <div class="ln-chart" data-draw="cum" data-source="inleg_dag"></div></div>
+      <div class="ln-box" id="g-bedrag"><h2>Betalingen per inlegbedrag</h2><p class="ln-sub">Hoeveel founders welk bedrag inlegden</p>
+        <div class="ln-chart" data-draw="bedrag" data-source="inleg_bedrag"></div></div>
+    </div>
+  </section>
+
+  <!-- FINANCIEEL -->
+  <section class="ln-page" id="financieel" role="tabpanel" hidden>
+    <h1 class="ln-h1">Financieel</h1>
+    <p class="ln-sum"><b data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Verkochte stuks">—</b> CanCycles verkocht voor <b data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Omzet incl btw">—</b> incl. btw. Break-even ligt bij <b data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Break-even stuks">—</b> stuks: nog <b data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Nog te verkopen tot break-even">—</b> te gaan.</p>
+    <div class="ln-cards">
+      <div class="ln-card" id="c-omzet"><h3>Omzet ex btw</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Omzet ex btw">—</b><p>Incl. btw: <span data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Omzet incl btw">—</span></p></div>
+      <div class="ln-card dark" id="c-stuks"><h3>Verkochte stuks</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Verkochte stuks">—</b><p>In <span data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Aantal verkopen">—</span> verkopen</p></div>
+      <div class="ln-card gold" id="c-kosten"><h3>Kosten ex btw</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Kosten ex btw">—</b><p>Geboekt in Inkopen &amp; Kosten</p></div>
+      <div class="ln-card" id="c-resultaat"><h3>Resultaat</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Resultaat">—</b><p>Omzet − kosten − vergoeding</p></div>
+      <div class="ln-card light" id="c-breakeven"><h3>Break-even</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Break-even stuks">—</b><p>Stuks nodig (rest à € 2,95)</p></div>
+      <div class="ln-card dark" id="c-gemprijs"><h3>Gem. verkoopprijs (werkelijk)</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Gemiddelde verkoopprijs incl btw">—</b><p>Incl. btw · planning: <span data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Verkoopprijs plan incl btw">—</span></p></div>
+    </div>
+    <div class="ln-prog" id="breakeven-voortgang">
+      <div class="top"><span><b>Op weg naar break-even</b></span><span><b data-draw="kpi" data-fmt="pct1" data-source="kpi" data-field="Waarde" data-where="Kengetal=Break-even voortgang %25">—</b> van de benodigde stuks verkocht</span></div>
+      <div class="ln-bar" data-draw="bar" data-key="Break-even voortgang %" data-source="kpi"></div>
+    </div>
+    <div class="ln-grid">
+      <div class="ln-box" id="g-scenario"><h2>Resultaat per scenario</h2><p class="ln-sub">Verwacht resultaat als we in totaal 500, 750 of 1.000 stuks verkopen (rest à € 2,95)</p>
+        <div class="ln-chart" data-draw="scenario" data-source="scenario"></div></div>
+      <div class="ln-box" id="g-begroting"><h2>Begroting</h2><p class="ln-sub">Begrote kosten ex btw volgens het ondernemingsplan</p>
+        <div class="ln-chart" data-draw="begroting" data-source="begroting"></div>
+        <div class="ln-legend"><span><i style="background:#263328"></i>Vast</span><span><i style="background:#A8C688"></i>Variabel</span></div></div>
+    </div>
+    <div class="ln-box" id="t-verkopen" style="margin-top:14px"><h2>Verkopen</h2><p class="ln-sub">Klantnamen zijn weggelaten</p>
+      <div class="ln-twrap"><table class="ln-table" data-source="verkopen" data-row-key="Nr">
+        <thead><tr><th data-field="Nr">Nr.</th><th data-field="Datum">Datum</th><th data-field="Omschrijving">Omschrijving</th><th class="r" data-field="Stuks">Stuks</th><th class="r" data-field="Omzet ex btw">Omzet ex btw</th><th class="r" data-field="Btw">Btw</th><th class="r" data-field="Omzet incl btw">Incl. btw</th><th class="r" data-field="Prijs per stuk incl btw">Per stuk</th></tr></thead>
+        <tbody data-draw="verkopen"></tbody></table></div></div>
+  </section>
+
+  <!-- KAS EN VOORRAAD -->
+  <section class="ln-page" id="kas" role="tabpanel" hidden>
+    <h1 class="ln-h1">Kas en voorraad</h1>
+    <p class="ln-sum">In kas: <b data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Kassaldo">—</b>. Na betaling van de Ciropack-order blijft <b data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Kas na Ciropack">—</b> over. Op voorraad: <b data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Voorraad stuks">—</b> stuks.</p>
+    <div class="ln-cards">
+      <div class="ln-card" id="c-kassaldo"><h3>Kassaldo</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Kassaldo">—</b><p>Inleg + verkopen − kosten</p></div>
+      <div class="ln-card gold" id="c-ciropack"><h3>Ciropack nog te betalen</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Ciropack nog te betalen">—</b><p>Order 1.000 st. incl. btw</p></div>
+      <div class="ln-card dark" id="c-kasna"><h3>Kas na Ciropack</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Kas na Ciropack">—</b><p>Vrij besteedbaar</p></div>
+      <div class="ln-card light" id="c-voorraad"><h3>Voorraad</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Voorraad stuks">—</b><p>Van <span data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Productie stuks">—</span> geproduceerd</p></div>
+      <div class="ln-card" id="c-voorraadwaarde"><h3>Voorraadwaarde</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Voorraadwaarde">—</b><p>À <span data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Kostprijs per stuk">—</span> kostprijs</p></div>
+      <div class="ln-card gold" id="c-btw"><h3>Te verrekenen btw</h3><b class="ln-val" data-draw="kpi" data-fmt="eur" data-source="kpi" data-field="Waarde" data-where="Kengetal=Te verrekenen btw">—</b><p>Ontvangen − voorbelasting</p></div>
+    </div>
+    <div class="ln-grid">
+      <div class="ln-box" id="g-kas"><h2>Van inleg naar vrije kas</h2><p class="ln-sub">Opbouw van het kassaldo, inclusief de nog te betalen Ciropack-order</p>
+        <div class="ln-chart" data-draw="kas" data-source="kas kpi"></div></div>
+      <div class="ln-box" id="g-voorraad"><h2>Productie: verkocht en voorraad</h2><p class="ln-sub">Van de eerste productierun van 1.000 stuks</p>
+        <div class="ln-chart" data-draw="voorraad" data-source="kpi"></div>
+        <div class="ln-legend"><span><i style="background:#6D7F48"></i>Verkocht</span><span><i style="background:#E9E6DD"></i>Voorraad</span></div></div>
+    </div>
+    <div class="ln-box" id="t-kosten" style="margin-top:14px"><h2>Inkopen en kosten</h2>
+      <div class="ln-twrap"><table class="ln-table" data-source="kosten" data-row-key="Nr">
+        <thead><tr><th data-field="Nr">Nr.</th><th data-field="Omschrijving">Omschrijving</th><th class="r" data-field="Ex btw">Ex btw</th><th class="r" data-field="Btw">Btw</th><th class="r" data-field="Incl btw">Incl. btw</th></tr></thead>
+        <tbody data-draw="kosten"></tbody></table></div></div>
+  </section>
+
+  <!-- MARKETING -->
+  <section class="ln-page" id="marketing" role="tabpanel" hidden>
+    <h1 class="ln-h1">Marketing</h1>
+    <div class="ln-note" id="voorbeeld-melding" hidden>Let op: er staan nog <b data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Voorbeeldposts">—</b> voorbeeldposts in de marketing-Excel. Deze cijfers zijn dus nog niet echt.</div>
+    <p class="ln-sum"><b data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Aantal posts">—</b> posts bereikten <b data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Bereik">—</b> mensen, met een engagement van <b data-draw="kpi" data-fmt="pct1" data-source="kpi" data-field="Waarde" data-where="Kengetal=Engagement %25">—</b>.</p>
+    <div class="ln-cards">
+      <div class="ln-card" id="c-posts"><h3>Posts</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Aantal posts">—</b></div>
+      <div class="ln-card dark" id="c-bereik"><h3>Bereik</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Bereik">—</b><p><span data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Weergaven">—</span> weergaven</p></div>
+      <div class="ln-card light" id="c-interacties"><h3>Interacties</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Interacties">—</b><p>Likes, reacties, shares, opgeslagen</p></div>
+      <div class="ln-card gold" id="c-engagement"><h3>Engagement</h3><b class="ln-val" data-draw="kpi" data-fmt="pct1" data-source="kpi" data-field="Waarde" data-where="Kengetal=Engagement %25">—</b><p>Interacties ÷ bereik</p></div>
+      <div class="ln-card" id="c-volgers"><h3>Volgers nu</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Volgers nu">—</b><p>+<span data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Nieuwe volgers">—</span> via posts</p></div>
+      <div class="ln-card dark" id="c-tags"><h3>Shares en tags</h3><b class="ln-val" data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Shares en reposts">—</b><p><span data-draw="kpi" data-fmt="int" data-source="kpi" data-field="Waarde" data-where="Kengetal=Tags en vermeldingen">—</span> tags/vermeldingen</p></div>
+    </div>
+    <div class="ln-grid">
+      <div class="ln-box" id="g-platform"><h2>Interacties per platform</h2><p class="ln-sub">Totaal likes, reacties, shares en opgeslagen</p>
+        <div class="ln-chart" data-draw="platform" data-source="platform"></div></div>
+      <div class="ln-box" id="g-volgers"><h2>Volgers per platform</h2><p class="ln-sub">Totaal aantal volgers per meetmoment</p>
+        <div class="ln-chart" data-draw="volgers" data-source="volgers"></div>
+        <div class="ln-legend" data-draw="volgleg"></div></div>
+    </div>
+    <div class="ln-box" id="t-posts" style="margin-top:14px"><h2>Posts</h2>
+      <div class="ln-twrap"><table class="ln-table" data-source="posts" data-row-key="Datum,Platform">
+        <thead><tr><th data-field="Datum">Datum</th><th data-field="Platform">Platform</th><th data-field="Type post">Type</th><th data-field="Omschrijving">Omschrijving</th><th class="r" data-field="Bereik">Bereik</th><th class="r" data-field="Likes">Likes</th><th class="r" data-field="Reacties">Reacties</th><th class="r" data-field="Shares/reposts">Shares</th><th class="r" data-field="Tags/vermeldingen">Tags</th><th class="r" data-field="Engagement %">Engagement</th></tr></thead>
+        <tbody data-draw="posts"></tbody></table></div></div>
+  </section>
+  <p class="ln-foot">LoopNova · studentenbedrijf HBO Technische Bedrijfskunde, Inholland Alkmaar · namen, e-mailadressen en rekeningnummers van founders en klanten staan niet op deze pagina.</p>
+</div>
+
+</div>
+<script src="d3.min.js"></script>
+<script>
+window.dash = (function(){
+  let DATA = null; const draws = {}, ons = [];
+  function redraw(){ if (!DATA) return; ons.forEach(f => { try { f(); } catch(e){ console.error(e); } });
+    document.querySelectorAll('[data-draw]').forEach(el => { if (el.closest('[hidden]')) return; const f = draws[el.dataset.draw]; if (f) try { f(el); } catch(e){ console.error(e); } }); }
+  let t; window.addEventListener('resize', () => { clearTimeout(t); t = setTimeout(redraw, 150); });
+  window.addEventListener('beforeprint', () => setTimeout(redraw, 0));
+  return { data: id => DATA && DATA[id] ? {status:'ok', data: DATA[id]} : {status: DATA ? 'missing' : 'loading', data: []},
+    draw: (n, fn) => { draws[n] = fn; }, onData: fn => { ons.push(fn); },
+    setLink: id => { try { history.replaceState(null, '', '#' + id); } catch(e){} redraw(); },
+    _set: d => { DATA = d; redraw(); } };
+})();
+</script>
+<script>
+
+(function(){
+  const nl = 'nl-NL';
+  const F = {
+    eur0: v => new Intl.NumberFormat(nl,{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(v),
+    eur: v => new Intl.NumberFormat(nl,{style:'currency',currency:'EUR',minimumFractionDigits:2,maximumFractionDigits:2}).format(v),
+    int: v => new Intl.NumberFormat(nl,{maximumFractionDigits:0}).format(v),
+    pct1: v => new Intl.NumberFormat(nl,{style:'percent',minimumFractionDigits:1,maximumFractionDigits:1}).format(v)
+  };
+  const C = {dark:'#263328', green:'#6D7F48', light:'#A8C688', sand:'#E9E6DD', gold:'#BC8E4A'};
+  const dag = d3.utcFormat('%-d %b'), parse = d3.utcParse('%Y-%m-%d');
+  const kpi = key => { const d = dash.data('kpi'); if (d.status !== 'ok') return null; const r = d.data.find(x => x.Kengetal === key); return r ? +r.Waarde : null; };
+  function tip(el){ const t = document.createElement('div'); t.className='ln-tip'; t.hidden = true; el.appendChild(t);
+    return { show(e, lines){ t.replaceChildren(...lines.map((l,i)=>{const s=document.createElement(i?'div':'b'); s.textContent=l; if(i===0){const w=document.createElement('div'); w.appendChild(s); return w;} return s;})); t.hidden=false;
+        const b = el.getBoundingClientRect(); let x = e.clientX-b.left+12, y = e.clientY-b.top-10; if (x+t.offsetWidth > b.width) x = e.clientX-b.left-t.offsetWidth-12; t.style.left=Math.max(0,x)+'px'; t.style.top=Math.max(0,y)+'px'; },
+      hide(){ t.hidden = true; } }; }
+  function empty(el, st){ el.replaceChildren(); const p=document.createElement('p'); p.style.cssText='color:#6c766d;font-size:13px;margin:20px 0';
+    p.textContent = st === 'error' ? 'Deze gegevens konden niet worden geladen.' : st === 'ok' ? 'Nog geen gegevens.' : '—'; el.appendChild(p); }
+  function svgOf(el, h, label){ el.replaceChildren(); const w = Math.max(260, el.clientWidth);
+    const s = d3.select(el).append('svg').attr('width','100%').attr('viewBox',`0 0 ${w} ${h}`).attr('role','img').attr('aria-label',label); return [s, w]; }
+  window.LN = {F, C, kpi};
+
+  // tabs
+  const tabs = [...document.querySelectorAll('.ln-tab')];
+  function open(id){ document.querySelectorAll('.ln-page').forEach(p => p.hidden = p.id !== id);
+    tabs.forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab === id))); dash.setLink(id); }
+  tabs.forEach(t => t.addEventListener('click', () => open(t.dataset.tab)));
+  const h = (location.hash || '').slice(1); if (tabs.some(t => t.dataset.tab === h)) open(h);
+  let vorige = null;
+  window.addEventListener('beforeprint', () => { if (vorige === null) vorige = (tabs.find(t=>t.getAttribute('aria-selected')==='true')||tabs[0]).dataset.tab; document.querySelectorAll('.ln-page').forEach(p => p.hidden = false); });
+  window.addEventListener('afterprint', () => { if (vorige !== null) { open(vorige); vorige = null; } });
+
+  // voorbeeld-melding marketing
+  dash.onData(() => { const n = kpi('Voorbeeldposts'); document.querySelectorAll('#voorbeeld-melding').forEach(e => e.hidden = !(n > 0)); });
+
+  dash.draw('upd', el => { const d = dash.data('info'); if (d.status !== 'ok' || !d.data[0]) { el.textContent = '—'; return; }
+    const t = new Date(d.data[0].Bijgewerkt); el.textContent = isNaN(t) ? d.data[0].Bijgewerkt : t.toLocaleString(nl,{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'}); });
+
+  dash.draw('kpi', el => { const key = decodeURIComponent((el.dataset.where||'').replace(/^Kengetal=/,'')); const v = kpi(key);
+    el.textContent = v === null ? '—' : (F[el.dataset.fmt] || F.int)(v);
+    const c = el.closest('.ln-card'); if (c && (key==='Resultaat'||key==='Kas na Ciropack')) el.style.color = v < 0 ? '#a4472f' : ''; });
+
+  dash.draw('bar', el => { const v = kpi(el.dataset.key); el.replaceChildren(); const d = document.createElement('div');
+    d.style.width = (v === null ? 0 : Math.max(0, Math.min(1, v)) * 100) + '%'; el.appendChild(d); });
+
+  // founders: cumulatief
+  dash.draw('cum', el => { const d = dash.data('inleg_dag'); if (d.status !== 'ok' || !d.data.length) return empty(el, d.status);
+    const rows = d.data.map(r => ({...r, t: parse(r.Dag), Inleg:+r.Inleg, Cumulatief:+r.Cumulatief}));
+    const doel = kpi('Foundersdoel') || 2000; const H = 250, m = {t:14,r:14,b:26,l:52};
+    const [s, W] = svgOf(el, H, 'Founderkapitaal per dag en cumulatief');
+    const x = d3.scaleBand().domain(rows.map(r => r.Dag)).range([m.l, W-m.r]).padding(.25);
+    const y = d3.scaleLinear().domain([0, Math.max(doel, d3.max(rows, r=>r.Cumulatief))*1.08]).nice().range([H-m.b, m.t]);
+    s.append('g').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(F.eur0).tickSize(-(W-m.l-m.r))).call(g=>{g.select('.domain').remove(); g.selectAll('line').attr('stroke','#e4e1d8');});
+    const every = Math.ceil(rows.length / Math.max(1, Math.floor((W-m.l-m.r)/48)));
+    s.append('g').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x).tickValues(rows.filter((_,i)=>i%every===0).map(r=>r.Dag)).tickFormat(v=>dag(parse(v)))).call(g=>g.select('.domain').attr('stroke','#cfcbc0'));
+    s.append('g').selectAll('rect').data(rows).join('rect').attr('x',r=>x(r.Dag)).attr('width',x.bandwidth()).attr('y',r=>y(r.Inleg)).attr('height',r=>y(0)-y(r.Inleg)).attr('fill',C.light).attr('rx',2);
+    s.append('line').attr('x1',m.l).attr('x2',W-m.r).attr('y1',y(doel)).attr('y2',y(doel)).attr('stroke',C.gold).attr('stroke-dasharray','5 4').attr('stroke-width',1.5);
+    s.append('text').attr('x',m.l+6).attr('y',y(doel)-5).attr('text-anchor','start').attr('class','lbl').style('fill',C.gold).text('Doel '+F.eur0(doel));
+    const cx = r => x(r.Dag)+x.bandwidth()/2;
+    s.append('path').datum(rows).attr('fill','none').attr('stroke',C.dark).attr('stroke-width',2.5).attr('d',d3.line().x(cx).y(r=>y(r.Cumulatief)));
+    s.append('g').selectAll('circle').data(rows).join('circle').attr('cx',cx).attr('cy',r=>y(r.Cumulatief)).attr('r',3.5).attr('fill',C.dark);
+    const last = rows[rows.length-1]; s.append('text').attr('x',cx(last)).attr('y',y(last.Cumulatief)+18).attr('dx',-8).attr('text-anchor','end').attr('class','lbl').text(F.eur0(last.Cumulatief));
+    const tp = tip(el);
+    s.append('g').selectAll('rect').data(rows).join('rect').attr('x',r=>x(r.Dag)-x.step()*x.padding()/2).attr('width',x.step()).attr('y',m.t).attr('height',H-m.t-m.b).attr('fill','transparent')
+      .on('pointermove',(e,r)=>tp.show(e,[d3.utcFormat('%-d %B %Y')(r.t), 'Inleg die dag: '+F.eur0(r.Inleg)+' ('+r.Betalingen+'×)', 'Totaal: '+F.eur0(r.Cumulatief)])).on('pointerleave',()=>tp.hide());
+  });
+
+  // generieke horizontale staven
+  function hbars(el, rows, opt){ const H = Math.max(140, rows.length*opt.row + 30), m = {t:6,r:opt.r||70,b:8,l:0};
+    const [s, W] = svgOf(el, H, opt.label);
+    const tmp = s.append('g'); let lw = 0; rows.forEach(r => { const t = tmp.append('text').text(opt.name(r)); lw = Math.max(lw, t.node().getComputedTextLength()); }); tmp.remove();
+    m.l = Math.min(W*0.45, lw + 10);
+    const vals = rows.map(opt.val); const mn = Math.min(0, d3.min(vals)), mx = Math.max(0, d3.max(vals));
+    let nw = 0; if (mn < 0) { const tt = s.append('text').attr('class','lbl').text(opt.fmt(mn)); nw = tt.node().getComputedTextLength() + 14; tt.remove(); }
+    const x = d3.scaleLinear().domain([mn, mx]).range([m.l + nw, W-m.r]);
+    const y = d3.scaleBand().domain(rows.map((_,i)=>i)).range([m.t, H-m.b]).padding(.28);
+    s.append('g').selectAll('text').data(rows).join('text').attr('x',m.l-8).attr('y',(_,i)=>y(i)+y.bandwidth()/2).attr('dy','.35em').attr('text-anchor','end').text(opt.name);
+    s.append('g').selectAll('rect').data(rows).join('rect').attr('x',r=>x(Math.min(0,opt.val(r)))).attr('width',r=>Math.abs(x(opt.val(r))-x(0))).attr('y',(_,i)=>y(i)).attr('height',y.bandwidth()).attr('rx',3).attr('fill',opt.color);
+    s.append('g').selectAll('text').data(rows).join('text').attr('class','lbl').attr('y',(_,i)=>y(i)+y.bandwidth()/2).attr('dy','.35em')
+      .attr('x',r=>opt.val(r)<0 ? x(opt.val(r))-6 : x(opt.val(r))+6).attr('text-anchor',r=>opt.val(r)<0?'end':'start').text(r=>opt.fmt(opt.val(r)));
+    if (mn < 0) s.append('line').attr('x1',x(0)).attr('x2',x(0)).attr('y1',m.t).attr('y2',H-m.b).attr('stroke','#9aa19b');
+    const tp = tip(el);
+    s.append('g').selectAll('rect').data(rows).join('rect').attr('x',0).attr('width',W).attr('y',(_,i)=>y(i)-y.step()*y.padding()/2).attr('height',y.step()).attr('fill','transparent')
+      .on('pointermove',(e,r)=>tp.show(e,opt.tip(r))).on('pointerleave',()=>tp.hide());
+  }
+  dash.draw('bedrag', el => { const d = dash.data('inleg_bedrag'); if (d.status !== 'ok' || !d.data.length) return empty(el, d.status);
+    hbars(el, d.data, {row:34, label:'Aantal betalingen per inlegbedrag', name:r=>r.Inleg, val:r=>+r.Betalingen, fmt:F.int, color:C.green, r:40,
+      tip:r=>[r.Inleg+' per founder', r.Betalingen+' betalingen', 'Samen '+F.eur0(r.Totaal)]}); });
+  dash.draw('scenario', el => { const d = dash.data('scenario'); if (d.status !== 'ok' || !d.data.length) return empty(el, d.status);
+    hbars(el, d.data, {row:52, label:'Resultaat per verkoopscenario', name:r=>r.Scenario, val:r=>+r.Resultaat, fmt:F.eur, r:80,
+      color:r=>+r.Resultaat<0?C.gold:C.green, tip:r=>[r.Scenario+' totaal verkocht', 'Resultaat: '+F.eur(r.Resultaat), 'Rendement founders: '+F.pct1(r['Rendement founders %'])]}); });
+  dash.draw('begroting', el => { const d = dash.data('begroting'); if (d.status !== 'ok' || !d.data.length) return empty(el, d.status);
+    hbars(el, d.data, {row:34, label:'Begrote kosten per post', name:r=>r.Post, val:r=>+r['Bedrag ex btw'], fmt:F.eur, r:80,
+      color:r=>r.Soort==='Vast'?C.dark:C.light, tip:r=>[r.Post, F.eur(r['Bedrag ex btw'])+' ex btw', r.Soort+' · '+r.Zekerheid]}); });
+  dash.draw('platform', el => { const d = dash.data('platform'); if (d.status !== 'ok' || !d.data.length) return empty(el, d.status);
+    hbars(el, d.data, {row:44, label:'Interacties per platform', name:r=>r.Platform, val:r=>+r.Interacties, fmt:F.int, color:C.green, r:50,
+      tip:r=>[r.Platform, r.Posts+' posts · bereik '+F.int(r.Bereik), F.int(r.Interacties)+' interacties ('+F.pct1(r['Engagement %']||0)+')', '+'+r['Nieuwe volgers']+' nieuwe volgers']}); });
+
+  // kas: waterval
+  dash.draw('kas', el => { const d = dash.data('kas'); if (d.status !== 'ok' || !d.data.length) return empty(el, d.status);
+    let acc = 0; const rows = d.data.map(r => { const v = +r.Bedrag, a = acc; acc += v; return {naam:r.Post, v, y0:a, y1:acc, tot:false}; });
+    const eind = kpi('Kas na Ciropack'); rows.push({naam:'Kas na Ciropack', v: eind ?? acc, y0:0, y1: eind ?? acc, tot:true});
+    const H = 270, m = {t:18,r:8,b:58,l:52}; const [s, W] = svgOf(el, H, 'Waterval van founderinleg naar vrije kas');
+    const x = d3.scaleBand().domain(rows.map(r=>r.naam)).range([m.l, W-m.r]).padding(.22);
+    const y = d3.scaleLinear().domain([Math.min(0,d3.min(rows,r=>Math.min(r.y0,r.y1))), d3.max(rows,r=>Math.max(r.y0,r.y1))*1.1]).nice().range([H-m.b, m.t]);
+    s.append('g').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(F.eur0).tickSize(-(W-m.l-m.r))).call(g=>{g.select('.domain').remove(); g.selectAll('line').attr('stroke','#e4e1d8');});
+    const ax = s.append('g').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x).tickSize(0)); ax.select('.domain').attr('stroke','#cfcbc0');
+    ax.selectAll('text').each(function(){ const t = d3.select(this), words = t.text().split(' '); t.text(null); let line = [], tsp = t.append('tspan').attr('x',0).attr('dy','1.1em'), n=0;
+      words.forEach(wd => { line.push(wd); tsp.text(line.join(' ')); if (tsp.node().getComputedTextLength() > x.bandwidth()+10 && line.length>1){ line.pop(); tsp.text(line.join(' ')); line=[wd]; if(++n<3) tsp = t.append('tspan').attr('x',0).attr('dy','1.1em').text(wd); } }); });
+    s.append('g').selectAll('rect').data(rows).join('rect').attr('x',r=>x(r.naam)).attr('width',x.bandwidth()).attr('y',r=>y(Math.max(r.y0,r.y1))).attr('height',r=>Math.max(1,Math.abs(y(r.y0)-y(r.y1)))).attr('rx',2)
+      .attr('fill',r=>r.tot?C.dark:r.v<0?C.gold:C.green);
+    s.append('g').selectAll('text').data(rows).join('text').attr('class','lbl').attr('text-anchor','middle').attr('x',r=>x(r.naam)+x.bandwidth()/2).attr('y',r=>y(Math.max(r.y0,r.y1))-5).text(r=>(r.v>0&&!r.tot?'+':'')+(Math.abs(r.v)<10?F.eur(r.v):F.eur0(r.v)));
+    const tp = tip(el);
+    s.append('g').selectAll('rect').data(rows).join('rect').attr('x',r=>x(r.naam)).attr('width',x.bandwidth()).attr('y',m.t).attr('height',H-m.t-m.b).attr('fill','transparent')
+      .on('pointermove',(e,r)=>tp.show(e,[r.naam, F.eur(r.v), r.tot?'Eindsaldo':'Saldo daarna: '+F.eur(r.y1)])).on('pointerleave',()=>tp.hide());
+  });
+
+  // voorraad donut
+  dash.draw('voorraad', el => { const v = kpi('Verkochte stuks'), r = kpi('Voorraad stuks'); if (v === null || r === null) return empty(el, dash.data('kpi').status);
+    const H = 240; const [s, W] = svgOf(el, H, 'Verkocht tegenover voorraad'); const R = Math.min(W, H)/2 - 8;
+    const data = [{n:'Verkocht', v, c:C.green}, {n:'Voorraad', v:r, c:C.sand}];
+    const g = s.append('g').attr('transform',`translate(${W/2},${H/2})`);
+    const tp = tip(el);
+    g.selectAll('path').data(d3.pie().sort(null).value(d=>d.v)(data)).join('path').attr('d',d3.arc().innerRadius(R*.62).outerRadius(R)).attr('fill',d=>d.data.c)
+      .on('pointermove',(e,d)=>tp.show(e,[d.data.n, F.int(d.data.v)+' stuks', F.pct1(d.data.v/(v+r))])).on('pointerleave',()=>tp.hide());
+    g.append('text').attr('text-anchor','middle').attr('dy','-.1em').attr('class','lbl').style('font-size','24px').text(F.int(r));
+    g.append('text').attr('text-anchor','middle').attr('dy','1.4em').text('op voorraad');
+  });
+
+  // volgers lijnen
+  const PC = {Instagram:C.green, TikTok:C.dark, LinkedIn:C.gold, Facebook:C.light, YouTube:'#8a5a44', Website:'#5b665c', Overig:'#9aa19b'};
+  const pcol = p => PC[p] || '#9aa19b';
+  dash.draw('volgers', el => { const d = dash.data('volgers'); if (d.status !== 'ok' || !d.data.length) return empty(el, d.status);
+    const rows = d.data.map(r => ({...r, t: parse(r.Datum), Volgers:+r.Volgers})); const groups = d3.group(rows, r => r.Platform);
+    const H = 240, m = {t:14,r:20,b:26,l:40}; const [s, W] = svgOf(el, H, 'Volgers per platform over tijd');
+    const ext = d3.extent(rows, r=>r.t); if (+ext[0] === +ext[1]) { ext[0] = d3.utcDay.offset(ext[0], -3); ext[1] = d3.utcDay.offset(ext[1], 3); }
+    const x = d3.scaleUtc().domain(ext).range([m.l, W-m.r]); const y = d3.scaleLinear().domain([0, d3.max(rows,r=>r.Volgers)*1.15]).nice().range([H-m.b, m.t]);
+    s.append('g').attr('transform',`translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickFormat(F.int).tickSize(-(W-m.l-m.r))).call(g=>{g.select('.domain').remove(); g.selectAll('line').attr('stroke','#e4e1d8');});
+    s.append('g').attr('transform',`translate(0,${H-m.b})`).call(d3.axisBottom(x).ticks(Math.max(2,Math.floor(W/110))).tickFormat(dag)).call(g=>g.select('.domain').attr('stroke','#cfcbc0'));
+    const tp = tip(el);
+    for (const [p, rs] of groups) { rs.sort((a,b)=>a.t-b.t);
+      s.append('path').datum(rs).attr('fill','none').attr('stroke',pcol(p)).attr('stroke-width',2.5).attr('d',d3.line().x(r=>x(r.t)).y(r=>y(r.Volgers)));
+      s.append('g').selectAll('circle').data(rs).join('circle').attr('cx',r=>x(r.t)).attr('cy',r=>y(r.Volgers)).attr('r',5).attr('fill',pcol(p))
+        .on('pointermove',(e,r)=>tp.show(e,[r.Platform, d3.utcFormat('%-d %B %Y')(r.t), F.int(r.Volgers)+' volgers'])).on('pointerleave',()=>tp.hide()); }
+  });
+  dash.draw('volgleg', el => { const d = dash.data('volgers'); el.replaceChildren(); if (d.status !== 'ok') return;
+    [...new Set(d.data.map(r=>r.Platform))].forEach(p => { const s = document.createElement('span'), i = document.createElement('i'); i.style.background = pcol(p); s.append(i, p); el.appendChild(s); }); });
+
+  // tabellen
+  function tbody(el, id, cols, keys){ const d = dash.data(id); el.replaceChildren(); if (d.status !== 'ok') return;
+    if (!d.data.length) { const tr = el.insertRow(), td = tr.insertCell(); td.colSpan = cols.length; td.textContent = 'Nog geen regels.'; return; }
+    d.data.forEach(r => { const tr = el.insertRow(); if (keys) tr.dataset.key = keys.map(k => encodeURIComponent(String(r[k]))).join(','); cols.forEach(([k, f]) => { const td = tr.insertCell(); const v = r[k]; td.textContent = v == null ? '' : f ? f(v) : String(v); if (f && f !== dt) td.className = 'r'; }); }); }
+  const dt = v => d3.utcFormat('%d-%m-%Y')(parse(v));
+  const eur = v => F.eur(+v), int = v => F.int(+v), pct = v => F.pct1(+v);
+  dash.draw('verkopen', el => tbody(el, 'verkopen', [['Nr'],['Datum',dt],['Omschrijving'],['Stuks',int],['Omzet ex btw',eur],['Btw',eur],['Omzet incl btw',eur],['Prijs per stuk incl btw',eur]]));
+  dash.draw('kosten', el => tbody(el, 'kosten', [['Nr'],['Omschrijving'],['Ex btw',eur],['Btw',eur],['Incl btw',eur]]));
+  dash.draw('posts', el => tbody(el, 'posts', [['Datum',dt],['Platform'],['Type post'],['Omschrijving'],['Bereik',int],['Likes',int],['Reacties',int],['Shares/reposts',int],['Tags/vermeldingen',int],['Engagement %',pct]], ['Datum','Platform']));
+})();
+
+</script>
+<script>
+(function(){
+  const ENC = {"salt": "bvkAH+7x6UZMydQCh9uGMA==", "iter": 600000, "iv": "LoHCkd2gsMqy2GyB", "ct": "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"};
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  const KEYNAME = 'loopnova-dash-key';
+  async function derive(pw){ const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveBits']);
+    return new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', hash:'SHA-256', salt:b64(ENC.salt), iterations:ENC.iter}, base, 256)); }
+  async function open(raw){ const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['decrypt']);
+    const pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:b64(ENC.iv)}, key, b64(ENC.ct));
+    return JSON.parse(new TextDecoder().decode(pt)); }
+  function show(data){ document.getElementById('login').style.display = 'none'; document.getElementById('slot').style.display = 'block'; dash._set(data); }
+  function store(raw){ try { localStorage.setItem(KEYNAME, btoa(String.fromCharCode(...raw))); } catch(e){} }
+  (async () => { try { const s = localStorage.getItem(KEYNAME); if (s) show(await open(b64(s))); } catch(e){ try { localStorage.removeItem(KEYNAME); } catch(_){} } })();
+  document.getElementById('lgform').addEventListener('submit', async ev => { ev.preventDefault();
+    const btn = document.getElementById('go'), fout = document.getElementById('fout'); btn.disabled = true; fout.textContent = '';
+    try { const raw = await derive(document.getElementById('pw').value); const data = await open(raw);
+      if (document.getElementById('onthoud').checked) store(raw); show(data); }
+    catch(e){ fout.textContent = 'Onjuist wachtwoord. Probeer het opnieuw.'; }
+    btn.disabled = false; });
+  document.getElementById('uitloggen').addEventListener('click', ev => { ev.preventDefault(); try { localStorage.removeItem(KEYNAME); } catch(e){} location.hash=''; location.reload(); });
+})();
+</script>
+</body></html>
